@@ -74,6 +74,15 @@ To do so install Docker and then simply use the included ``bdinfo`` wrapper scri
 Wrapper script example:
 ```
 ./bdinfo --help
+
+# Display playlists in given disc, prompt user to select playlists
+# to scan, and output the generated report to the same disc path:
+# (If an ISO file is given, then a REPORT_DEST must be given as well. See next example.)
+./bdinfo BD_PATH
+
+# Same as above, but output report in given report folder:
+# (If BD_PATH is an ISO, these are the minimum arguments required)
+./bdinfo BD_PATH REPORT_OUTPUT_DIR
 ```
 
 Alternatively, you can run the Docker container yourself, e.g:
