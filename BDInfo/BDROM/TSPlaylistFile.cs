@@ -367,6 +367,7 @@ namespace BDInfo
                     streamClip.Length = streamClip.TimeOut - streamClip.TimeIn;
                     streamClip.RelativeTimeIn = TotalLength;
                     streamClip.RelativeTimeOut = streamClip.RelativeTimeIn + streamClip.Length;
+                    streamClip.RelativeLength = streamClip.Length / TotalLength;
                     StreamClips.Add(streamClip);
                     chapterClips.Add(streamClip);
 
@@ -443,33 +444,59 @@ namespace BDInfo
                     for (int i = 0; i < streamCountVideo; i++)
                     {
                         TSStream stream = CreatePlaylistStream(data, ref pos);
-                        if (stream != null) PlaylistStreams[stream.PID] = stream;
+                        if (stream != null)
+                        {
+                            if (!PlaylistStreams.ContainsKey(stream.PID) || streamClip.RelativeLength > 0.01)
+                                PlaylistStreams[stream.PID] = stream;
+                        }
                     }
                     for (int i = 0; i < streamCountAudio; i++)
                     {
                         TSStream stream = CreatePlaylistStream(data, ref pos);
-                        if (stream != null) PlaylistStreams[stream.PID] = stream;
+                        if (stream != null)
+                        {
+                            if (!PlaylistStreams.ContainsKey(stream.PID) || streamClip.RelativeLength > 0.01)
+                                PlaylistStreams[stream.PID] = stream;
+                        }
                     }
                     for (int i = 0; i < streamCountPG; i++)
                     {
                         TSStream stream = CreatePlaylistStream(data, ref pos);
-                        if (stream != null) PlaylistStreams[stream.PID] = stream;
+                        if (stream != null)
+                        {
+                            if (!PlaylistStreams.ContainsKey(stream.PID) || streamClip.RelativeLength > 0.01)
+                                PlaylistStreams[stream.PID] = stream;
+                        }
                     }
                     for (int i = 0; i < streamCountIG; i++)
                     {
                         TSStream stream = CreatePlaylistStream(data, ref pos);
-                        if (stream != null) PlaylistStreams[stream.PID] = stream;
+                        if (stream != null)
+                        {
+                            if (!PlaylistStreams.ContainsKey(stream.PID) || streamClip.RelativeLength > 0.01)
+                                PlaylistStreams[stream.PID] = stream;
+                        }
                     }
                     for (int i = 0; i < streamCountSecondaryAudio; i++)
                     {
                         TSStream stream = CreatePlaylistStream(data, ref pos);
-                        if (stream != null) PlaylistStreams[stream.PID] = stream;
+                        if (stream != null)
+                        {
+                            if (!PlaylistStreams.ContainsKey(stream.PID) || streamClip.RelativeLength > 0.01)
+                                PlaylistStreams[stream.PID] = stream;
+                        }
+
                         pos += 2;
                     }
                     for (int i = 0; i < streamCountSecondaryVideo; i++)
                     {
                         TSStream stream = CreatePlaylistStream(data, ref pos);
-                        if (stream != null) PlaylistStreams[stream.PID] = stream;
+                        if (stream != null)
+                        {
+                            if (!PlaylistStreams.ContainsKey(stream.PID) || streamClip.RelativeLength > 0.01)
+                                PlaylistStreams[stream.PID] = stream;
+                        }
+
                         pos += 6;
                     }
                     /*
@@ -667,6 +694,8 @@ namespace BDInfo
                 case TSStreamType.LPCM_AUDIO:
                 case TSStreamType.MPEG1_AUDIO:
                 case TSStreamType.MPEG2_AUDIO:
+                case TSStreamType.MPEG2_AAC_AUDIO:
+                case TSStreamType.MPEG4_AAC_AUDIO:
 
                     int audioFormat = ReadByte(data, ref pos);
 
@@ -767,11 +796,14 @@ namespace BDInfo
             }
             foreach (TSStreamClip clip in StreamClips)
             {
-                if (clip.StreamClipFile.Streams.Count > referenceClip.StreamClipFile.Streams.Count)
+                if (referenceClip.StreamFile == null && clip.StreamFile != null)
+                    referenceClip = clip;
+
+                if (clip.StreamClipFile.Streams.Count > referenceClip.StreamClipFile.Streams.Count && clip.RelativeLength > 0.01)
                 {
                     referenceClip = clip;
                 }
-                else if (clip.Length > referenceClip.Length)
+                else if (clip.Length > referenceClip.Length && clip.StreamFile != null)
                 {
                     referenceClip = clip;
                 }
@@ -790,6 +822,8 @@ namespace BDInfo
                     }
                 }
             }
+
+            if (referenceClip == null) return;
 
             foreach (TSStream clipStream
                 in referenceClip.StreamClipFile.Streams.Values)
@@ -864,7 +898,7 @@ namespace BDInfo
                                 ((TSVideoStream) clipStream).ExtendedData;
                         }
                         else if (stream.IsAudioStream &&
-                            clipStream.IsAudioStream)
+                                clipStream.IsAudioStream)
                         {
                             TSAudioStream audioStream = (TSAudioStream)stream;
                             TSAudioStream clipAudioStream = (TSAudioStream)clipStream;
@@ -897,12 +931,28 @@ namespace BDInfo
                             {
                                 audioStream.HasExtensions = clipAudioStream.HasExtensions;
                             }
+                            if (clipAudioStream.ExtendedData != audioStream.ExtendedData)
+                            {
+                                audioStream.ExtendedData = clipAudioStream.ExtendedData;
+                            }
                             if (clipAudioStream.CoreStream != null &&
                                 audioStream.CoreStream == null)
                             {
                                 audioStream.CoreStream = (TSAudioStream)
                                     clipAudioStream.CoreStream.Clone();
                             }
+                        }
+                        else if (stream.IsGraphicsStream &&
+                                clipStream.IsGraphicsStream)
+                        {
+                            TSGraphicsStream graphicsStream = (TSGraphicsStream)stream;
+                            TSGraphicsStream clipGraphicsStream = (TSGraphicsStream)clipStream;
+                            
+                            graphicsStream.Captions = clipGraphicsStream.Captions;
+                            graphicsStream.ForcedCaptions = clipGraphicsStream.ForcedCaptions;
+                            graphicsStream.Width = clipGraphicsStream.Width;
+                            graphicsStream.Height = clipGraphicsStream.Height;
+                            graphicsStream.CaptionIDs = clipGraphicsStream.CaptionIDs;
                         }
                     }
                 }
@@ -1280,14 +1330,18 @@ namespace BDInfo
                     return 6;
                 case TSStreamType.AC3_PLUS_AUDIO:
                     return 7;
-                case TSStreamType.DTS_HD_AUDIO:
+                case TSStreamType.MPEG2_AAC_AUDIO:
                     return 8;
-                case TSStreamType.AC3_TRUE_HD_AUDIO:
+                case TSStreamType.MPEG4_AAC_AUDIO:
                     return 9;
-                case TSStreamType.DTS_HD_MASTER_AUDIO:
+                case TSStreamType.DTS_HD_AUDIO:
                     return 10;
-                case TSStreamType.LPCM_AUDIO:
+                case TSStreamType.AC3_TRUE_HD_AUDIO:
                     return 11;
+                case TSStreamType.DTS_HD_MASTER_AUDIO:
+                    return 12;
+                case TSStreamType.LPCM_AUDIO:
+                    return 13;
 
                 case TSStreamType.SUBTITLE:
                     return 1;
