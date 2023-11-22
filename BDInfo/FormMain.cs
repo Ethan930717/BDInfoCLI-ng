@@ -392,7 +392,7 @@ namespace BDInfo
         private void InitBDROM(
             string path)
         {
-            ShowNotification("Please wait while we scan the disc...");
+            ShowNotification("阿K正在努力解析中，请耐心等待...");
 
             CustomPlaylistCount = 0;
             buttonBrowse.Enabled = false;
@@ -605,10 +605,10 @@ namespace BDInfo
                 }
                 else
                 {
-                    System.Console.WriteLine("Scan completed successfully.");
+                    System.Console.WriteLine("阿K收工喽");
                 }
 
-                System.Console.WriteLine("Please wait while we generate the report...");
+                System.Console.WriteLine("写报告中，马上就好啦...");
                 try                                                                                                                            {
                     FormReport report = (FormReport)FormatterServices.GetUninitializedObject(typeof(FormReport));
                     report.Generate(BDROM, selectedPlaylists, ScanResult, savePath);
@@ -1183,7 +1183,7 @@ namespace BDInfo
             progressBarScan.Value = 0;
             progressBarScan.Minimum = 0;
             progressBarScan.Maximum = 100;
-            labelProgress.Text = "Scanning disc...";
+            labelProgress.Text = "扫描中...";
             labelTimeElapsed.Text = "00:00:00";
             labelTimeRemaining.Text = "00:00:00";
             buttonBrowse.Enabled = false;
@@ -1240,7 +1240,7 @@ namespace BDInfo
 
             List<TSStreamFile> streamFiles = new List<TSStreamFile>();
             List<string> streamNames;
-            System.Console.WriteLine("Preparing to analyze the following:");
+            System.Console.WriteLine("楼下的还在排队:");
             // Adapted from ScanBDROM()
             foreach (TSPlaylistFile playlist in selectedPlaylists)
             {
@@ -1392,7 +1392,7 @@ namespace BDInfo
                 if (scanState.StreamFile != null)
                 {
                     labelProgress.Text = string.Format(CultureInfo.InvariantCulture,
-                        "Scanning {0}...\r\n",
+                        "扫描中 {0}...\r\n",
                         scanState.StreamFile.DisplayName);
                 }
 #endif
@@ -1483,7 +1483,7 @@ namespace BDInfo
                 else
                 {
                     MessageBox.Show(
-                        "Scan completed successfully.", "BDInfo Scan",
+                        "阿K收工喽", "BDInfo Scan",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -1502,7 +1502,7 @@ namespace BDInfo
 
         private void GenerateReport()
         {
-            ShowNotification("Please wait while we generate the report...");
+            ShowNotification("写报告中，马上就好啦...");
             buttonViewReport.Enabled = false;
 
             List<TSPlaylistFile> playlists = new List<TSPlaylistFile>();

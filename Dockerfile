@@ -8,4 +8,5 @@ RUN nuget restore -NonInteractive
 RUN xbuild /property:Configuration=Release /property:OutDir=/usr/src/app/build/
 WORKDIR /usr/src/app/build
 
-ENTRYPOINT [ "mono",  "./BDInfo.exe" ]
+# 分开命令和参数
+ENTRYPOINT [ "mono",  "BDInfo.exe", "-w" ]

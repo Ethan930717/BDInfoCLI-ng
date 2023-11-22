@@ -117,7 +117,7 @@ namespace BDInfo
             }
 
             FormMain main = (FormMain)FormatterServices.GetUninitializedObject(typeof(FormMain));
-            System.Console.WriteLine("Please wait while we scan the disc...");
+            System.Console.WriteLine("阿K正在努力解析中，请耐心等待...");
             DoWorkEventArgs eventArgs = new DoWorkEventArgs(bdPath);
             main.InitBDROMWork(null, eventArgs);
             if (mpls != null) {
