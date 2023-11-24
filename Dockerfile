@@ -9,4 +9,4 @@ RUN xbuild /property:Configuration=Release /property:OutDir=/usr/src/app/build/
 WORKDIR /usr/src/app/build
 
 # 分开命令和参数
-ENTRYPOINT [ "mono",  "BDInfo.exe", "-w" ]
+ENTRYPOINT [ "mono",  "BDInfo.exe" ]
