@@ -1,0 +1,12 @@
+/usr/src/app/source/BDInfo/obj/Release/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.FormChart.resources
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.FormMain.resources
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.FormPlaylist.resources
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.FormReport.resources
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.FormSettings.resources
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.Properties.Resources.resources
+/usr/src/app/build/BDInfo.exe.config
+/usr/src/app/build/BDInfo.pdb
+/usr/src/app/build/BDInfo.exe
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.exe
+/usr/src/app/source/BDInfo/obj/Release/BDInfo.pdb
